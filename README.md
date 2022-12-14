@@ -6,6 +6,8 @@
 <img src="https://img.shields.io/github/v/release/rahriver/rofi-noter">
 </p>
 
+https://user-images.githubusercontent.com/89016694/207634348-22872861-cf6d-41fb-9648-0e6a14feed4d.mp4
+
 > Create and view notes inside the Rofi application launcher. This repository is based on the [Noter](https://github.com/rahriver/Noter) script.
 
 You can:
