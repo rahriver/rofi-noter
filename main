@@ -1,129 +1,110 @@
 #!/bin/bash
 
-# <<--------- Settings --------->> #
-
-# Set the directory where the notes are stored
 NOTES_DIR="/home/core/Temp/MEGA/Notes"
-# Set the editor to use
 EDITOR=nvim
+VIEW=zathura
 TERMINAL=kitty
 
-# <<--------- Choosing Templates --------->> #
-Basic() {
+# ------------------------ #
+create_document() {
+  # Use rofi to prompt the user to select the type of document to create
+  document_type=$(echo -e "Basic\nLaTeX\nBeamer\nRmark" | rofi -dmenu -p "What kind of note?")
 
-    notify-send "Basic Document Created!"
-    cp $NOTES_DIR/Templates/SimpleNote.md $NOTES_DIR/"$cn_name".$EXTENSION
-    $TERMINAL -e $EDITOR $NOTES_DIR/"$cn_name".$EXTENSION
-}
+  # Check if the user cancelled the prompt
+  if [ -z "$document_type" ]; then
+    return
+  fi
 
-LaTeX() {
-
-    notify-send "LaTeX Document Created!"
-    cp $NOTES_DIR/Templates/LaTeX.tex $NOTES_DIR/"$cn_name".$EXTENSION
-    $TERMINAL -e $EDITOR $NOTES_DIR/"$cn_name".$EXTENSION
-}
-
-Beamer() {
-
-    notify-send "Beamer Presentation Created!"
-    cp $NOTES_DIR/Templates/Presentation.tex $NOTES_DIR/"$cn_name".$EXTENSION
-    $TERMINAL -e $EDITOR $NOTES_DIR/"$cn_name".$EXTENSION
-}
-
-RMark() {
-
-    notify-send "R Markdown Document Created!"
-    cp $NOTES_DIR/Templates/RMarkdown.rmd $NOTES_DIR/"$cn_name".$EXTENSION
-    $TERMINAL -e $EDITOR $NOTES_DIR/"$cn_name".$EXTENSION
-}
-
-template() {
-
-  tm_chosen=$(cat ~/.config/scripts/temp_options.md | rofi -dmenu -i -p "Choose Template")
-
-    if [ "$tm_chosen" = "Basic" ]; then
+  case "$document_type" in
+    Basic)
+      template="SimpleNote.md"
       EXTENSION="md"
-      check
-      Basic
-    elif [ "$tm_chosen" = "LaTeX" ]; then
+      message="Basic Document Created!"
+      ;;
+    LaTeX)
+      template="LaTeX.tex"
       EXTENSION="tex"
-      check
-      LaTeX
-    elif [ "$tm_chosen" = "RMark" ]; then
+      message="LaTeX Document Created!"
+      ;;
+    Beamer)
+      template="Presentation.tex"
+      EXTENSION="tex"
+      message="Beamer Presentation Created!"
+      ;;
+    Rmark)
+      template="RMarkdown.rmd"
       EXTENSION="rmd"
-      check
-      RMark
-    elif [ "$tm_chosen" = "Beamer" ]; then
-      EXTENSION="tex"
-      check
-      Beamer
-    else
-      exit 0
+      message="R Markdown Document Created!"
+      ;;
+    *)
+      echo "Invalid option"
+      return 1
+      ;;
+  esac
+
+  # Use rofi to prompt the user to enter a name for the note
+  cn_name=$(rofi -dmenu -p "Enter a name for the note:")
+
+  # Check if the user cancelled the prompt
+  if [ -z "$cn_name" ]; then
+    return
+  fi
+
+  # Check if the file already exists
+  if [ -f "$NOTES_DIR/$cn_name.$EXTENSION" ]; then
+    # Prompt the user to confirm if they want to overwrite the file
+    if ! (echo -e "Yes\nNo" | rofi -dmenu -p "Note already exists. Overwrite?" | grep -q "Yes"); then
+      return
     fi
+  fi
+
+  notify-send "$message"
+  cp "$NOTES_DIR/Templates/$template" "$NOTES_DIR/$cn_name.$EXTENSION"
+  "$TERMINAL" -e "$EDITOR" "$NOTES_DIR/$cn_name.$EXTENSION"
 }
 
-check() {
-
-  if [ -f $NOTES_DIR/"$cn_name".$EXTENSION ]; then
-      cn_exist=$(rofi -dmenu -i -p "Note already exists! Do you want to overwrite it?")
-      if [ "$cn_exist" = "y" ]; then
-        notify-send "New Note Created!" && $TERMINAL -e $EDITOR $NOTES_DIR/"$cn_name".$EXTENSION
-        exit 0
-      elif [ "$cn_exist" = "n" ]; then
-        create_note
-      else
-        exit 0
-      fi
+open_document() {
+  documuent=$(find "$directory" -type f \( -iname "*.*" \))
+  selected_document=$(echo "$documuent" | rofi -dmenu -p "📖 Open:")
+  if [[ -n $selected_document ]]; then
+    $VIEW "$selected_document"
   fi
 }
 
-create_note() {
-
-    cn_name=$(rofi -dmenu -i -p "Enter the note name")
-    if [ -z "$cn_name" ]; then
-      exit 0
-    else
-      template
-    fi
-}
-
-view_note() {
-
-  selected=$(find $NOTES_DIR -type f -name "*" | rofi -dmenu -i -p "Open")
-  $TERMINAL -e $EDITOR $selected
-}
-
-delete_note() {
-
-  selected=$(find $NOTES_DIR -type f -name "*" | rofi -dmenu -i -p "Delete")
-  rm $selected
-
+edit_notes() {
+  documuent=$(find "$directory" -type f \( -iname "*.*" \))
+  selected_document=$(echo "$documuent" | rofi -dmenu -p "📖 Open:")
+  if [[ -n $selected_document ]]; then
+    $TERMINAL -e $EDITOR "$selected_document"
+  fi
 }
 
 main() {
-
-    # Check if the note directory exists
-    if [ ! -d $NOTES_DIR ]; then
-      mk_chosen=$(rofi -dmenu -i -p "Notes directory not found! Do you want to create it?")
-      if [ "$mk_chosen" = "y" ]; then
-        mkdir $NOTES_DIR
-      elif [ "$mk_chosen" = "n" ]; then
-        exit 0
-      fi
-    fi
-
-    main_chosen=$(cat ~/.config/scripts/main_options.md | rofi -dmenu -i -p "Choose an option")
-    if [ -z "$main_chosen" ]; then
-      exit 0
-    else
-      if [ "$main_chosen" = "Create a new note" ]; then
-        create_note
-      elif [ "$main_chosen" = "View notes" ]; then
-        view_note
-      elif [ "$main_chosen" = "Delete a note" ]; then
-        delete_note
-      fi
-    fi
+  # Prompt the user to select "Library" or "Articles" using Rofi
+  selected_dir=$(echo -e "📑 Create Note\n🔖 View Notes\n📚 Library\n📜 Articles" | rofi -dmenu -p "📂 Choose an action:")
+  # Set the directory based on the user's selection
+  # if selected_dir is not empty
+  if [[ -n $selected_dir ]]; then
+      case $selected_dir in
+          "📑 Create Note")
+              create_document
+              ;;
+          "🔖 View Notes")
+              directory="/home/core/Temp/MEGA/Notes"
+              edit_notes
+              ;;
+          "📚 Library")
+              directory="/home/core/Documents/Books"
+              open_document
+              ;;
+          "📜 Articles")
+              directory="/home/core/Temp/MEGA/Zotero"
+              open_document
+              ;;
+      esac
+  else
+    exit 0
+  fi
 }
 
 main
