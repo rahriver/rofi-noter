@@ -1,6 +1,5 @@
 #!/bin/bash
 
-NOTES_DIR="/home/core/Temp/MEGA/Notes"
 EDITOR=nvim
 VIEW=zathura
 TERMINAL=kitty
@@ -51,7 +50,7 @@ create_document() {
   fi
 
   # Check if the file already exists
-  if [ -f "$NOTES_DIR/$cn_name.$EXTENSION" ]; then
+  if [ -f "$directory/$cn_name.$EXTENSION" ]; then
     # Prompt the user to confirm if they want to overwrite the file
     if ! (echo -e "Yes\nNo" | rofi -dmenu -p "Note already exists. Overwrite?" | grep -q "Yes"); then
       return
@@ -59,8 +58,8 @@ create_document() {
   fi
 
   notify-send "$message"
-  cp "$NOTES_DIR/Templates/$template" "$NOTES_DIR/$cn_name.$EXTENSION"
-  "$TERMINAL" -e "$EDITOR" "$NOTES_DIR/$cn_name.$EXTENSION"
+  cp "$directory/Templates/$template" "$directory/$cn_name.$EXTENSION"
+  "$TERMINAL" -e "$EDITOR" "$directory/$cn_name.$EXTENSION"
 }
 
 open_document() {
@@ -89,6 +88,7 @@ main() {
   if [[ -n $selected_dir ]]; then
       case $selected_dir in
           "📑 Create Note")
+              directory="/home/core/Temp/MEGA/Notes"
               create_document
               ;;
           "🔖 View Notes")

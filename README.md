@@ -8,16 +8,17 @@
 
 https://user-images.githubusercontent.com/89016694/207634348-22872861-cf6d-41fb-9648-0e6a14feed4d.mp4
 
-> Create and view notes inside the Rofi application launcher. This repository is based on the [Noter](https://github.com/rahriver/Noter) script.
+> Create and view your library inside the Rofi application launcher.
 
-You can:
-- View notes
-- Delete notes
-- Create notes
+Functionalities:
+📑 Create Note
+🔖 View Notes
+📚 View Library
+📜 View Articles
 
-You can put your note templates inside the templates directory. Place the templates directory in your NOTES_DIR.
+You can put your note templates inside the templates directory. Place your templates folder in your NOTES_DIR.
 
 Change these parameters to your liking:
-NOTES_DIR: The directory where your notes are stored
-EDITOR: The editor you want to use
-TERMINAL: The terminal you want to open your notes in
+**directory**: For each Functionality
+**EDITOR**: The editor you want to use
+**TERMINAL**: The terminal you want to open your notes in
