@@ -6,19 +6,32 @@
 <img src="https://img.shields.io/github/v/release/rahriver/rofi-noter">
 </p>
 
-https://user-images.githubusercontent.com/89016694/207634348-22872861-cf6d-41fb-9648-0e6a14feed4d.mp4
+# 📹 Preview
+https://user-images.githubusercontent.com/89016694/210968802-8afee864-57e1-4d11-b1eb-aca3490d9dc0.mp4
 
+## ⚙️ Usage
 > Create and view your library inside the Rofi application launcher.
 
 Functionalities:
-📑 Create Note
-🔖 View Notes
-📚 View Library
-📜 View Articles
+- 📑 Create Note
+  - Basic (Markdown)
+  - LaTeX
+  - Beamer (Presentation)
+  - R Markdown
+- 🔖 View Notes
+- 📚 View Library
+- 📜 View Articles
 
-You can put your note templates inside the templates directory. Place your templates folder in your NOTES_DIR.
+You can put your note templates inside the templates directory.
 
-Change these parameters to your liking:
-**directory**: For each Functionality
-**EDITOR**: The editor you want to use
-**TERMINAL**: The terminal you want to open your notes in
+> Change these parameters to your liking:
+- **directory**: For each Functionality
+- **EDITOR**: The file editor you want to open your files in
+- **TERMINAL**: The terminal you want to open your notes in
+
+## Dependencies
+- ripgrep
+- rofi
+
+### ☕ Support
+Give this repo a star :O
