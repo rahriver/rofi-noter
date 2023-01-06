@@ -64,16 +64,18 @@ create_document() {
 }
 
 open_document() {
-  documuent=$(find "$directory" -type f \( -iname "*.*" \))
-  selected_document=$(echo "$documuent" | rofi -dmenu -p "📖 Open:")
+  # case insensitive search with ripgrep
+  document=$(rg --files --iglob "*.pdf" --iglob "*.epub" --iglob "*.mobi" $directory)
+  # documuent=$(find "$directory" -type f \( -iname "*" \))
+  selected_document=$(echo "$document" | rofi -dmenu -i -p "📖 Open:")
   if [[ -n $selected_document ]]; then
     $VIEW "$selected_document"
   fi
 }
 
 edit_notes() {
-  documuent=$(find "$directory" -type f \( -iname "*.*" \))
-  selected_document=$(echo "$documuent" | rofi -dmenu -p "📖 Open:")
+  document=$(rg --files --iglob "*.md" --iglob "*.wiki" --iglob "*.tex" $directory)
+  selected_document=$(echo "$document" | rofi -dmenu -i -p "📖 Open:")
   if [[ -n $selected_document ]]; then
     $TERMINAL -e $EDITOR "$selected_document"
   fi
