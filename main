@@ -1,13 +1,13 @@
 #!/bin/bash
 
 EDITOR=nvim
-VIEW=zathura
+VIEW=~/.local/bin/zathura
 TERMINAL=kitty
 
 # ------------------------ #
 create_document() {
   # Use rofi to prompt the user to select the type of document to create
-  document_type=$(echo -e "Basic\nLaTeX\nBeamer\nRmark" | rofi -dmenu -p "What kind of note?")
+  document_type=$(echo -e "Basic\nLaTeX\nBeamer\nRmark" | rofi -dmenu -i -p "What kind of note?")
 
   # Check if the user cancelled the prompt
   if [ -z "$document_type" ]; then
@@ -80,9 +80,20 @@ edit_notes() {
   fi
 }
 
+download_books() {
+  bookname=$(echo "" | rofi -dmenu -p "Enter book name:")
+  if [ -z "$bookname" ]
+  then
+      echo "No book name entered"
+      exit 1
+  fi
+
+  kitty -T "dropbooks" -e libby --rofi $bookname
+}
+
 main() {
   # Prompt the user to select "Library" or "Articles" using Rofi
-  selected_dir=$(echo -e "📑 Create Note\n🔖 View Notes\n📚 Library\n📜 Articles" | rofi -dmenu -p "📂 Choose an action:")
+  selected_dir=$(echo -e "📑 Create Note\n🔖 View Notes\n📚 Library\n📜 Articles\n⏬ Download Books" | rofi -dmenu -i -p "📂 Choose an action:")
   # Set the directory based on the user's selection
   # if selected_dir is not empty
   if [[ -n $selected_dir ]]; then
@@ -102,6 +113,9 @@ main() {
           "📜 Articles")
               directory="/home/core/Temp/MEGA/Zotero"
               open_document
+              ;;
+          "⏬ Download Books")
+              download_books
               ;;
       esac
   else

@@ -21,6 +21,7 @@ Functionalities:
 - 🔖 View Notes
 - 📚 View Library
 - 📜 View Articles
+- ⏬ Download Books
 
 You can put your note templates inside the templates directory.
 
@@ -32,6 +33,7 @@ You can put your note templates inside the templates directory.
 ## Dependencies
 - ripgrep
 - rofi
+- [libby](https://github.com/carterprince/libby)
 
 ### ☕ Support
 Give this repo a star :O
