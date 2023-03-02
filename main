@@ -65,7 +65,6 @@ create_document() {
 open_document() {
   # case insensitive search with ripgrep
   document=$(rg --files --iglob "*.pdf" --iglob "*.epub" --iglob "*.mobi" $directory)
-  # documuent=$(find "$directory" -type f \( -iname "*" \))
   selected_document=$(echo "$document" | rofi -dmenu -i -p "📖 Open:")
   if [[ -n $selected_document ]]; then
     $VIEW "$selected_document"

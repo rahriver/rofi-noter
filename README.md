@@ -6,13 +6,13 @@
 <img src="https://img.shields.io/github/v/release/rahriver/rofi-noter">
 </p>
 
+> Welcome to Rofi Noter, a bash script that runs Rofi with different functionalities to create and view your notes and library. With Rofi Noter, you can easily organize your notes and access them directly from the Rofi application launcher.
+
 # 📹 Preview
-https://user-images.githubusercontent.com/89016694/210968802-8afee864-57e1-4d11-b1eb-aca3490d9dc0.mp4
 
-## ⚙️ Usage
-> Create and view your library inside the Rofi application launcher.
+## ⚙️  Usage
+To use Rofi Noter, simply run the command rofi-noter in your terminal. This will open Rofi with the available functionalities:
 
-Functionalities:
 - 📑 Create Note
   - Basic (Markdown)
   - LaTeX
@@ -25,15 +25,26 @@ Functionalities:
 
 You can put your note templates inside the templates directory.
 
-> Change these parameters to your liking:
+## Configuration
+Rofi Noter is customizable to suit your needs. You can change the following parameters in the script:
+
 - **directory**: For each Functionality
 - **EDITOR**: The file editor you want to open your files in
 - **TERMINAL**: The terminal you want to open your notes in
 
 ## Dependencies
-- ripgrep
-- rofi
+Before using Rofi Noter, make sure the following dependencies are installed on your system:
+- [ripgrep](https://github.com/BurntSushi/ripgrep)
+- [rofi](https://github.com/davatorium/rofi)
 - [libby](https://github.com/carterprince/libby)
 
+## Installation
+To install Rofi Noter, clone the repository and run the installation script:
+```bash
+git clone https://github.com/username/rofi-noter.git
+cd rofi-noter
+./install.sh
+```
+
 ### ☕ Support
-Give this repo a star :O
+If you find Rofi Noter useful, please consider giving this repository a star on GitHub. If you have any issues or suggestions, feel free to open an issue or pull request. Thanks for using Rofi Noter!
