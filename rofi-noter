@@ -92,7 +92,7 @@ download_books() {
       exit 1
   fi
 
-  kitty -T "dropbooks" -e libby --rofi $bookname
+  $TERMINAL -T "dropbooks" -e libby --rofi $bookname
 }
 
 main() {
