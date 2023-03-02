@@ -4,7 +4,12 @@ EDITOR=nvim
 VIEW=~/.local/bin/zathura
 TERMINAL=kitty
 
-# ------------------------ #
+# <<------ Directories ------>> #
+book_library="<path_to_your_book_library>"
+note_library="<path_to_your_note_library>"
+article_library="<path_to_your_article_library>"
+
+# <<------ Main ------>> #
 create_document() {
   # Use rofi to prompt the user to select the type of document to create
   document_type=$(echo -e "Basic\nLaTeX\nBeamer\nRmark" | rofi -dmenu -i -p "What kind of note?")
@@ -98,19 +103,19 @@ main() {
   if [[ -n $selected_dir ]]; then
       case $selected_dir in
           "📑 Create Note")
-              directory="/home/core/Temp/MEGA/Notes"
+              directory=$note_library
               create_document
               ;;
           "🔖 View Notes")
-              directory="/home/core/Temp/MEGA/Notes"
+              directory=$note_library
               edit_notes
               ;;
           "📚 Library")
-              directory="/home/core/Documents/Books"
+              directory=$book_library
               open_document
               ;;
           "📜 Articles")
-              directory="/home/core/Temp/MEGA/Zotero"
+              directory=$article_library
               open_document
               ;;
           "⏬ Download Books")
