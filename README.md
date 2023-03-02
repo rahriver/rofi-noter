@@ -42,7 +42,7 @@ Before using Rofi Noter, make sure the following dependencies are installed on y
 ## Installation
 To install Rofi Noter, clone the repository and run the installation script:
 ```bash
-git clone https://github.com/username/rofi-noter.git
+git clone https://github.com/rahriver/rofi-noter.git
 cd rofi-noter
 cp ./rofi-noter /usr/bin
 ```
