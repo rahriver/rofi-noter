@@ -9,6 +9,7 @@
 > Welcome to Rofi Noter, a bash script that runs Rofi with different functionalities to create and view your notes and library. With Rofi Noter, you can easily organize your notes and access them directly from the Rofi application launcher.
 
 # 📹 Preview
+https://user-images.githubusercontent.com/89016694/222392394-cfbfca20-c122-4362-98bc-75e5214bb755.mp4
 
 ## ⚙️  Usage
 To use Rofi Noter, simply run the command rofi-noter in your terminal. This will open Rofi with the available functionalities:
@@ -43,7 +44,7 @@ To install Rofi Noter, clone the repository and run the installation script:
 ```bash
 git clone https://github.com/username/rofi-noter.git
 cd rofi-noter
-./install.sh
+cp ./rofi-noter /usr/bin
 ```
 
 ### ☕ Support
