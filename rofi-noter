@@ -1,14 +1,16 @@
 #!/bin/bash
 
-EDITOR=lvim
-VIEW=zathura
-TERMINAL=kitty
+TERMINAL=$(basename "$SHELL")
+VIEW="<your_fav_viewer>"
+EDITOR=vim
+THEME=""
+#e.g., rounded-purple-dark
 
 # <<------ Directories ------>> #
-book_library="/home/core/Documents/Books"
-note_library="/home/core/Temp/MEGA/Obsidian/Broadest/"
-template_library="/home/core/Temp/MEGA/Notes/"
-article_library="/home/core/Temp/MEGA/Zotero/"
+book_library="<path_to_your_book_library>"
+template_library="<path_to_your_templates>"
+note_library="<path_to_your_note_library>"
+article_library="<path_to_your_article_library>"
 
 # <<------ Options ------>> #
 declare -A actions
@@ -20,7 +22,7 @@ actions["⏬ Download Books"]="download_books"
 
 # <<------ Main ------>> #
 create_document() {
-  document_type=$(echo -e "Basic\nLaTeX\nBeamer\nRmark" | rofi -dmenu -i -p "What kind of note?" -theme rounded-purple-dark)
+  document_type=$(echo -e "Basic\nLaTeX\nBeamer\nRmark" | rofi -dmenu -i -p "What kind of note?" ${THEME:+-theme $THEME})
 
   if [ -z "$document_type" ]; then
     return
@@ -53,14 +55,14 @@ create_document() {
       ;;
   esac
 
-  cn_name=$(rofi -dmenu -p "Enter a name for the note:" -theme rounded-purple-dark)
+  cn_name=$(rofi -dmenu -p "Enter a name for the note:" ${THEME:+-theme $THEME})
 
   if [ -z "$cn_name" ]; then
     return
   fi
 
   if [ -f "$directory/$cn_name.$EXTENSION" ]; then
-    if ! (echo -e "Yes\nNo" | rofi -dmenu -p "Note already exists. Overwrite?" -theme rounded-purple-dark | grep -q "Yes"); then
+    if ! (echo -e "Yes\nNo" | rofi -dmenu -p "Note already exists. Overwrite?" ${THEME:+-theme $THEME} | grep -q "Yes"); then
       return
     fi
   fi
@@ -72,7 +74,7 @@ create_document() {
 
 open_document() {
   document=$(rg --files --iglob "*.pdf" --iglob "*.epub" --iglob "*.mobi" $directory)
-  selected_document=$(echo "$document" | rofi -dmenu -i -p "📖 Open:" -theme rounded-purple-dark)
+  selected_document=$(echo "$document" | rofi -dmenu -i -p "📖 Open:" ${THEME:+-theme $THEME})
   if [[ -n $selected_document ]]; then
     $VIEW "$selected_document"
   fi
@@ -80,14 +82,14 @@ open_document() {
 
 edit_notes() {
   document=$(rg --files --iglob "*.md" --iglob "*.wiki" --iglob "*.tex" $directory)
-  selected_document=$(echo "$document" | rofi -dmenu -i -p "📖 Open:" -theme rounded-purple-dark)
+  selected_document=$(echo "$document" | rofi -dmenu -i -p "📖 Open:" ${THEME:+-theme $THEME})
   if [[ -n $selected_document ]]; then
     $TERMINAL -e $EDITOR "$selected_document"
   fi
 }
 
 download_books() {
-  bookname=$(echo "" | rofi -dmenu -p "Enter book name:" -theme rounded-purple-dark)
+  bookname=$(echo "" | rofi -dmenu -p "Enter book name:" ${THEME:+-theme $THEME})
   if [ -z "$bookname" ]
   then
       echo "No book name entered"
@@ -98,7 +100,7 @@ download_books() {
 }
 
 main() {
-  selected_action=$(printf '%s\n' "${!actions[@]}" | rofi -dmenu -i -p "📂 Choose an action:" -theme rounded-purple-dark)
+  selected_action=$(printf '%s\n' "${!actions[@]}" | rofi -dmenu -i -p "📂 Choose an action:" ${THEME:+-theme $THEME})
   
   if [ -z "$selected_action" ]; then
     exit 0
