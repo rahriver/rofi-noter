@@ -1,20 +1,27 @@
 #!/bin/bash
 
-EDITOR=nvim
-VIEW=~/.local/bin/zathura
+EDITOR=lvim
+VIEW=zathura
 TERMINAL=kitty
 
 # <<------ Directories ------>> #
-book_library="<path_to_your_book_library>"
-note_library="<path_to_your_note_library>"
-article_library="<path_to_your_article_library>"
+book_library="/home/core/Documents/Books"
+note_library="/home/core/Temp/MEGA/Obsidian/Broadest/"
+template_library="/home/core/Temp/MEGA/Notes/"
+article_library="/home/core/Temp/MEGA/Zotero/"
+
+# <<------ Options ------>> #
+declare -A actions
+actions["📑 Create Note"]=$template_library
+actions["🔖 View Notes"]=$note_library
+actions["📚 Books"]=$book_library
+actions["📜 Articles"]=$article_library
+actions["⏬ Download Books"]="download_books"
 
 # <<------ Main ------>> #
 create_document() {
-  # Use rofi to prompt the user to select the type of document to create
-  document_type=$(echo -e "Basic\nLaTeX\nBeamer\nRmark" | rofi -dmenu -i -p "What kind of note?")
+  document_type=$(echo -e "Basic\nLaTeX\nBeamer\nRmark" | rofi -dmenu -i -p "What kind of note?" -theme rounded-purple-dark)
 
-  # Check if the user cancelled the prompt
   if [ -z "$document_type" ]; then
     return
   fi
@@ -46,18 +53,14 @@ create_document() {
       ;;
   esac
 
-  # Use rofi to prompt the user to enter a name for the note
-  cn_name=$(rofi -dmenu -p "Enter a name for the note:")
+  cn_name=$(rofi -dmenu -p "Enter a name for the note:" -theme rounded-purple-dark)
 
-  # Check if the user cancelled the prompt
   if [ -z "$cn_name" ]; then
     return
   fi
 
-  # Check if the file already exists
   if [ -f "$directory/$cn_name.$EXTENSION" ]; then
-    # Prompt the user to confirm if they want to overwrite the file
-    if ! (echo -e "Yes\nNo" | rofi -dmenu -p "Note already exists. Overwrite?" | grep -q "Yes"); then
+    if ! (echo -e "Yes\nNo" | rofi -dmenu -p "Note already exists. Overwrite?" -theme rounded-purple-dark | grep -q "Yes"); then
       return
     fi
   fi
@@ -68,9 +71,8 @@ create_document() {
 }
 
 open_document() {
-  # case insensitive search with ripgrep
   document=$(rg --files --iglob "*.pdf" --iglob "*.epub" --iglob "*.mobi" $directory)
-  selected_document=$(echo "$document" | rofi -dmenu -i -p "📖 Open:")
+  selected_document=$(echo "$document" | rofi -dmenu -i -p "📖 Open:" -theme rounded-purple-dark)
   if [[ -n $selected_document ]]; then
     $VIEW "$selected_document"
   fi
@@ -78,52 +80,47 @@ open_document() {
 
 edit_notes() {
   document=$(rg --files --iglob "*.md" --iglob "*.wiki" --iglob "*.tex" $directory)
-  selected_document=$(echo "$document" | rofi -dmenu -i -p "📖 Open:")
+  selected_document=$(echo "$document" | rofi -dmenu -i -p "📖 Open:" -theme rounded-purple-dark)
   if [[ -n $selected_document ]]; then
     $TERMINAL -e $EDITOR "$selected_document"
   fi
 }
 
 download_books() {
-  bookname=$(echo "" | rofi -dmenu -p "Enter book name:")
+  bookname=$(echo "" | rofi -dmenu -p "Enter book name:" -theme rounded-purple-dark)
   if [ -z "$bookname" ]
   then
       echo "No book name entered"
       exit 1
   fi
 
-  $TERMINAL -T "dropbooks" -e libby --rofi $bookname
+  kitty -T "dropbooks" -e libby --rofi $bookname
 }
 
 main() {
-  # Prompt the user to select "Library" or "Articles" using Rofi
-  selected_dir=$(echo -e "📑 Create Note\n🔖 View Notes\n📚 Library\n📜 Articles\n⏬ Download Books" | rofi -dmenu -i -p "📂 Choose an action:")
-  # Set the directory based on the user's selection
-  # if selected_dir is not empty
-  if [[ -n $selected_dir ]]; then
-      case $selected_dir in
-          "📑 Create Note")
-              directory=$note_library
-              create_document
-              ;;
-          "🔖 View Notes")
-              directory=$note_library
-              edit_notes
-              ;;
-          "📚 Library")
-              directory=$book_library
-              open_document
-              ;;
-          "📜 Articles")
-              directory=$article_library
-              open_document
-              ;;
-          "⏬ Download Books")
-              download_books
-              ;;
-      esac
-  else
+  selected_action=$(printf '%s\n' "${!actions[@]}" | rofi -dmenu -i -p "📂 Choose an action:" -theme rounded-purple-dark)
+  
+  if [ -z "$selected_action" ]; then
     exit 0
+  fi
+
+  selected_dir_or_func="${actions[$selected_action]}"
+
+  if [ "$selected_dir_or_func" = "download_books" ]; then
+    $selected_dir_or_func
+  else
+    directory="$selected_dir_or_func"
+    case $selected_action in
+      "📑 Create Note")
+        create_document
+        ;;
+      "🔖 View Notes")
+        edit_notes
+        ;;
+      "📚 Books" | "📜 Articles")
+        open_document
+        ;;
+    esac
   fi
 }
 
