@@ -1,16 +1,16 @@
 #!/bin/bash
 
-TERMINAL=$(basename "$SHELL")
+TERMINAL=kitty
 VIEW=zathura
 EDITOR=nvim
-THEME="spotlight-dark"
+# THEME="spotlight-dark"
 #e.g., rounded-purple-dark
 
 # <<------ Directories ------>> #
 book_library="/home/core/Documents/Books/Left/"
 template_library="/home/core/Documents/Notes/Templates/"
 note_library="/home/core/Documents/Obsidian/Broadest/"
-article_library=""
+article_library="/home/core/Zotero/storage/"
 
 # <<------ Options ------>> #
 declare -A actions
@@ -82,10 +82,11 @@ open_document() {
 }
 
 edit_notes() {
-  document=$(rg --files --iglob "*.md" --iglob "*.wiki" --iglob "*.tex" $directory)
+  document=$(find $directory -name '*.md' -printf '%f\n')
   selected_document=$(echo "$document" | rofi -dmenu -i -p "📖 Open:" ${THEME:+-theme $THEME})
+  doc=$(find ~+ -type f -name "$selected_document" | head -1)
   if [[ -n $selected_document ]]; then
-    $TERMINAL -e $EDITOR "$selected_document"
+       $TERMINAL -e $EDITOR "$doc"
   fi
 }
 
