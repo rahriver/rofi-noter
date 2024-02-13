@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TERMINAL=kitty
+TERMINAL=<your_terminal>
 VIEW=zathura
 EDITOR=nvim
 # THEME="spotlight-dark"
