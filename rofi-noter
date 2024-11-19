@@ -1,16 +1,15 @@
 #!/bin/bash
 
-TERMINAL=<your_terminal>
-VIEW=zathura
 EDITOR=nvim
-# THEME="spotlight-dark"
-#e.g., rounded-purple-dark
+VIEW=zathura
+TERMINAL=kitty
+THEME=spotlight-dark
 
 # <<------ Directories ------>> #
-book_library="/home/core/Documents/Books/Left/"
-template_library="/home/core/Documents/Notes/Templates/"
-note_library="/home/core/Documents/Obsidian/Broadest/"
-article_library="/home/core/Zotero/storage/"
+book_library="/path/to/books/"
+note_library="/path/to/notes/"
+template_library="/path/to/note/templates/"
+article_library="/path/to/articles/"
 
 # <<------ Options ------>> #
 declare -A actions
@@ -22,7 +21,7 @@ actions["⏬ Download Books"]="download_books"
 
 # <<------ Main ------>> #
 create_document() {
-  document_type=$(echo -e "Basic\nLaTeX\nBeamer\nRmark" | rofi -dmenu -i -p "What kind of note?" ${THEME:+-theme $THEME})
+  document_type=$(echo -e "Basic\nLaTeX\nBeamer\nRmark" | rofi -dmenu -i -p "What kind of note?" -theme $THEME)
 
   if [ -z "$document_type" ]; then
     return
@@ -55,14 +54,14 @@ create_document() {
       ;;
   esac
 
-  cn_name=$(rofi -dmenu -p "Enter a name for the note:" ${THEME:+-theme $THEME})
+  cn_name=$(rofi -dmenu -p "Enter a name for the note:" -theme $THEME)
 
   if [ -z "$cn_name" ]; then
     return
   fi
 
   if [ -f "$directory/$cn_name.$EXTENSION" ]; then
-    if ! (echo -e "Yes\nNo" | rofi -dmenu -p "Note already exists. Overwrite?" ${THEME:+-theme $THEME} | grep -q "Yes"); then
+    if ! (echo -e "Yes\nNo" | rofi -dmenu -p "Note already exists. Overwrite?" -theme $THEME | grep -q "Yes"); then
       return
     fi
   fi
@@ -73,25 +72,23 @@ create_document() {
 }
 
 open_document() {
-  document=$(find $directory -name '*.pdf' -printf '%f\n')
-  selected_document=$(echo "$document" | rofi -dmenu -i -p "📖 Open:" ${THEME:+-theme $THEME})
-  doc=$(find ~+ -type f -name "$selected_document" | head -1)
-  if [[ -n $selected_document ]]; then
-      $VIEW "$doc"
-  fi
+    FILE=$(find "$directory" -type f -name "*.pdf" -printf "%f\n" | rofi -theme $THEME -dmenu -i -p "Select PDF:")
+    if [[ -n "$FILE" ]]; then
+        FULL_PATH=$(find "$directory" -type f -name "$FILE" -print -quit)
+        zathura "$FULL_PATH"
+    fi
 }
 
 edit_notes() {
-  document=$(find $directory -name '*.md' -printf '%f\n')
-  selected_document=$(echo "$document" | rofi -dmenu -i -p "📖 Open:" ${THEME:+-theme $THEME})
-  doc=$(find ~+ -type f -name "$selected_document" | head -1)
-  if [[ -n $selected_document ]]; then
-       $TERMINAL -e $EDITOR "$doc"
-  fi
+    FILE=$(find "$directory" -type f -name "*.md" -printf "%f\n" | rofi -theme $THEME -dmenu -i -p "Select Note:")
+    if [[ -n "$FILE" ]]; then
+        FULL_PATH=$(find "$directory" -type f -name "$FILE" -print -quit)
+        $TERMINAL -e $EDITOR "$FULL_PATH"
+    fi
 }
 
 download_books() {
-  bookname=$(echo "" | rofi -dmenu -p "Enter book name:" ${THEME:+-theme $THEME})
+  bookname=$(echo "" | rofi -dmenu -p "Enter book name:" -theme $THEME)
   if [ -z "$bookname" ]
   then
       echo "No book name entered"
@@ -102,7 +99,7 @@ download_books() {
 }
 
 main() {
-  selected_action=$(printf '%s\n' "${!actions[@]}" | rofi -dmenu -i -p "📂 Choose an action:" ${THEME:+-theme $THEME})
+  selected_action=$(printf '%s\n' "${!actions[@]}" | rofi -dmenu -i -p "📂 Choose an action:" -theme $THEME)
   
   if [ -z "$selected_action" ]; then
     exit 0
